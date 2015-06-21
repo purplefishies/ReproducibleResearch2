@@ -15,3 +15,5 @@ vignettes/*.pdf
 
 *.csv
 *.bz2
+
+.RData
