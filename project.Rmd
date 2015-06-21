@@ -43,7 +43,7 @@ Tornados according to the Fujita scale (F-scale)
   0,1,2,3,4,5
 Hurricaines that do not involve tornadoes or Hail
 Hail of any type that do not include tornadoes
-High Wind related 
+Thunderstorm / High Wind related but no Tornadoes, Hurricanes or Hail related
 Cold without Snow and Ice related injuries and deaths
 Heat (without dust)
 Flood 
@@ -53,6 +53,8 @@ Dust without heat
 
 
 The process for creating the filters was performed in an interative way so as to ensure that data wasn't counted twice to a given category. The first data types were relatively easy such as Tornadoes, but when diving down into a more selective chategory like HAIl, it was important to perform appropriate filters that would select out chategories that were already considered such as Tornadoes and Hurricaines that tend to produce Hail but whose chategory would be a superset of the damage chategory being analyzed.
+
+For instance, a typical encounter would be to first filter the events that matched "Hail", and then reduce that set by excluding events that matched tornado and hurricane. 
 
 
 ```{r,echo=TRUE}
