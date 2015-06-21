@@ -18,8 +18,8 @@ merge_all <- function(x) {
 }
 
 tornadoes <- ddat %>%
-    filter( !is.na(F) ) %>%
-    group_by(F) %>%
+    filter( !is.na("F") ) %>%
+    group_by("F") %>%
     mutate( EVTYPE=ifelse(!is.na("F"),paste("TORNADO_F",as.character(F),sep=""),"BLAH"))  %>%
     group_by( EVTYPE ) %>% 
     summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),

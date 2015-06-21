@@ -15,8 +15,10 @@ mode        : selfcontained # {standalone, draft}
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='./figure/',
                      warning=FALSE, message=FALSE)
+```
 
 
+```{r,echo=TRUE,results='asis'}
 library(dplyr)
 library(ggplot2)
 library(lubridate)
@@ -29,7 +31,7 @@ With global scientific consensus corroborating the direct causal relationship be
 This analyis will involve using the storm data provided by the national weather service between the years of 1950 and 2011. The assumptions for this analyis based on the years of coverage 
 
 
-```{r,echo=TRUE}
+```{r,echo=TRUE,results='asis'}
 dat <- read.csv("stormdata.csv")
 ddat <- tbl_df(dat)
 ```
@@ -59,34 +61,34 @@ For instance, a typical encounter would be to first filter the events that match
 
 
 We calculate each type of event as follows
-
 ```{r,echo=TRUE}
-tornadoes <- ddat %>%
-    filter( !is.na(F) ) %>%
-    group_by(F) %>%
-    mutate( EVTYPE=ifelse(!is.na("F"),paste("TORNADO_F",as.character(F),sep=""),"BLAH"))  %>%
-    group_by( EVTYPE ) %>% 
-    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
-               ave_injuries=mean(INJURIES,rm.na=TRUE),
-               ave_propdmg = mean(PROPDMG,rm.na=TRUE),
-               ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
-              )
-  knitr::kable(tornadoes)
+length(ddat$F)
 ```
 
 
+```{r,echo=TRUE}
+tornadoes <- ddat %>%
+  filter( !is.na("F") ) %>%
+  group_by("F") %>%
+  mutate( EVTYPE=ifelse(!is.na("F"),paste("TORNADO_F",as.character(F),sep=""),"BLAH")) %>%
+  group_by( EVTYPE ) %>% summarise(ave_fatal=mean(FATALITIES,rm.na=TRUE))
+#   summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),ave_injuries=mean(INJURIES,rm.na=TRUE),ave_propdmg = mean(PROPDMG,rm.na=TRUE),ave_cropdmg = mean(CROPDMG,rm.na=TRUE))
+```
+#     
+#   knitr::kable(tornadoes)
+
 ### Hurricanes
 
-```{r,echo=TRUE}
-hurricane <- ddat %>%
-    filter( grepl(".*hur[r]?i.*", EVTYPE,perl=T,ignore.case=T) ) %>%
-    mutate( EVTYPE="HURRICANE") %>%
-    group_by(EVTYPE) %>%
-    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
-              ave_injuries=mean(INJURIES,rm.na=TRUE),
-              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
-              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
-              )
+```{r,echo=TRUE,}
+# hurricane <- ddat %>% filter( grepl(".*hur[r]?i.*", EVTYPE,perl=T,ignore.case=T) ) 
+# %>%
+# mutate( EVTYPE="HURRICANE") %>%
+# group_by(EVTYPE) %>%
+# summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+#               ave_injuries=mean(INJURIES,rm.na=TRUE),
+#               ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+#               ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+#               )
 ```
 
 ### Hail only effects
@@ -171,7 +173,6 @@ flood <- ddat %>%
 ### Ice and Snow without wind effects
 
 ```{r,echo=TRUE}
-
 cold_ice_snow <- ddat %>%
     filter( grepl(".*(ice|snow).*", EVTYPE,perl=T,ignore.case=T) ) %>%
     filter(!grepl(".*(flood).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
@@ -208,7 +209,7 @@ dust <- ddat %>%
     filter(!grepl(".*(wind).*",EVTYPE,perl=T,ignore.case=T) ) %>%
     mutate( EVTYPE="DUST") %>%
     group_by(EVTYPE) %>%
-    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+    summarise(ave_fatal = mean(FATALITIES,rm.na=TRUE),
               ave_injuries=mean(INJURIES,rm.na=TRUE),
               ave_propdmg = mean(PROPDMG,rm.na=TRUE),
               ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
@@ -222,18 +223,17 @@ all_data <- Reduce( function(x,y){ merge(x,y,all=T) },
   list(tornadoes, hurricane, hail, tstorm_wind, 
        cold_noice_snow, heat, flood, cold_ice_snow, volcano, dust ) 
   )
-all_data
+  
+knitr::kable(all_data)
 ```
 
 
 
-
-Clearly, from this table, we find that the tornadoes account for the 
-marjority of average fatalities and injuries. 
-
+Clearly, from this table, we find that the tornadoes of the variety F4 and F5 constitute the disasters with the 
 ##Will be investigating which types of events are most harmful to human health
 
 which parameters of the dataset indicate deaths / injuries
+
 
 
 
