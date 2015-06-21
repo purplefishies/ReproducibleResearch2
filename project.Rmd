@@ -31,16 +31,35 @@ This analyis will involve using the storm data provided by the national weather 
 
 ```{r,echo=TRUE}
 dat <- read.csv("stormdata.csv")
+ddat <- tbl_df(dat)
 ```
 
 
 # Data Processing
 
 Something goes in here
+```{r,echo=TRUE}
+perstorm_fatal_and_injuries <- ddat %>% 
+group_by( EVTYPE,F ) %>%
+summarise( ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
+knitr::kable(perstorm_fatal_and_injuries)
+```
 
-Will be investigating which types of events are most harmful to human health
+Clearly, from this table, we find that the tornadoes account for the 
+marjority of average fatalities and injuries.  
+
+
+
+##Will be investigating which types of events are most harmful to human health
+
+which parameters of the dataset indicate deaths / injuries
+
+
 
 Which events have the largest economic consequences
+
+
+
 
 
 # Results
