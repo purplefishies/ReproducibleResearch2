@@ -28,7 +28,6 @@ library(lubridate)
 I began my analysis using the storm data provided by the national weather service 
 
 
-
 ```{r,echo=TRUE}
 dat <- read.csv("stormdata.csv")
 ```
@@ -38,7 +37,16 @@ dat <- read.csv("stormdata.csv")
 
 Something goes in here
 
+Will be investigating which types of events are most harmful to human health
+
+Which events have the largest economic consequences
+
+
 # Results
 
 Something goes in here too
 
+
+# Conclusion 
+
+Something here too
