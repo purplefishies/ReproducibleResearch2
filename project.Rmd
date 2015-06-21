@@ -24,8 +24,9 @@ library(lubridate)
 
 
 # Syopsis
+With global scientific consensus corroborating the direct causal relationship between mankind's consumption of fossil fuels and global climate change, it is ever more important that Government resources be allocated to handle the new weather related disasters that are spawned by this changes of the Earth's climate.  In this dossier , we will be investigating ways to assess which weather related 
 
-I began my analysis using the storm data provided by the national weather service 
+This analyis will involve using the storm data provided by the national weather service between the years of 1950 and 2011. The assumptions for this analyis based on the years of coverage 
 
 
 ```{r,echo=TRUE}
