@@ -54,17 +54,16 @@ Dust without heat
 
 The process for creating the filters was performed in an interative way so as to ensure that data wasn't counted twice to a given category. The first data types were relatively easy such as Tornadoes, but when diving down into a more selective chategory like HAIl, it was important to perform appropriate filters that would select out chategories that were already considered such as Tornadoes and Hurricaines that tend to produce Hail but whose chategory would be a superset of the damage chategory being analyzed.
 
-For instance, a typical encounter would be to first filter the events that matched "Hail", and then reduce that set by excluding events that matched tornado and hurricane. 
+For instance, a typical encounter would be to first filter the events that matched "wind", and then reduce that set iterarively by inspecting the unique set of events that matched wind **and then exclude** events that had been already captured by a previous grouping.
 
-
+An example is the following. To perform the filtering for "wind", I would start with the following filter
 ```{r,echo=TRUE}
-tornadoes <- ddat %>% 
-  filter ( !is.na(F) ) %>%
-  group_by(F) %>%
-  mutate(blah = ifelse(!is.na(F),"TORNADO","FOO")) %>%
-  summarise(EVTYPE,ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
-  knitr::kable(tornadoes)
+dat %>% filter( grepl(".*wind.*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    select(EVTYPE) %>% unique()
 ```
+Then I would inspect the results, and discover that several other FACTORS had been accounted for. These included "flood","cold","hurricane". Hence these FACTORS would need to be removed in order to establish what effect this one condition of "wind" had on the statistics I was interested in studying.
+
+
 
 ```{r,echo=TRUE}
 tornadoes <- ddat %>% 
@@ -76,13 +75,6 @@ tornadoes <- ddat %>%
 
 
 
-Something goes in here
-```{r,echo=TRUE}
-perstorm_fatal_and_injuries <- ddat %>% 
-  group_by( EVTYPE,F ) %>%
-  summarise( ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
-knitr::kable(perstorm_fatal_and_injuries)
-```
 
 Clearly, from this table, we find that the tornadoes account for the 
 marjority of average fatalities and injuries. 

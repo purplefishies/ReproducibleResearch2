@@ -70,8 +70,9 @@ dat %>% filter( grepl(".*(wind|thunder|tstm).*", EVTYPE,perl=T,ignore.case=T) ) 
               ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
               )
 
-cold <- 
-dat %>% filter( grepl(".*(cold|chill|snow).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+cold_noice_snow <- 
+dat %>% filter( grepl(".*(ice|cold|chill|snow).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(flood).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
     mutate( EVTYPE="COLD") %>%
     group_by(EVTYPE) %>%
     summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
@@ -90,11 +91,58 @@ dat %>% filter( grepl(".*(heat).*", EVTYPE,perl=T,ignore.case=T) ) %>%
               ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
               )
 
+dat %>% filter( grepl(".*(flood).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(thunder|tstm).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(wind).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(snow).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="FLOOD") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+    
+cold_noice_snow <- 
+dat %>% filter( grepl(".*(ice|snow).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(flood).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(chill|snow).*",EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(wind).*",EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="ICE_SNOW") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+
+volcano <-
+dat %>% filter( grepl(".*volc.*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="VOLCANO") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+
+dust <- 
+dat %>% filter( grepl(".*dust.*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(wind).*",EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="DUST") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
 
 
 
 
-## select(EVTYPE) %>% unique()
+##select(EVTYPE) %>% unique()
+##select(EVTYPE) %>% unique()
+##select(EVTYPE) %>% unique()
 
 
 
