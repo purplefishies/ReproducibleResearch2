@@ -57,13 +57,6 @@ The process for creating the filters was performed in an interative way so as to
 For instance, a typical encounter would be to first filter the events that matched "wind", and then reduce that set iterarively by inspecting the unique set of events that matched wind **and then exclude** events that had been already captured by a previous grouping.
 
 
-```{r,echo=TRUE}
-tornadoes <- ddat %>% 
-  filter( !is.na(F)) %>% 
-  mutate( EVTYPE=ifelse(F,paste("TORNADO_",as.character(F),sep=""),"BAR")) %>% 
-  summarise(EVTYPE,ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
-  knitr::kable(tornadoes)
-```
 
 We calculate each type of event as follows
 
@@ -78,7 +71,9 @@ tornadoes <- ddat %>%
                ave_propdmg = mean(PROPDMG,rm.na=TRUE),
                ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
               )
+  knitr::kable(tornadoes)
 ```
+
 
 ### Hurricanes
 
@@ -94,7 +89,8 @@ hurricane <- ddat %>%
               )
 ```
 
-### Hail
+### Hail only effects
+
 ```{r,echo=TRUE}
 hail <- ddat %>%
     filter( grepl(".*hail.*", EVTYPE,perl=T,ignore.case=T) ) %>%
