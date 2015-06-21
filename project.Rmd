@@ -37,18 +37,53 @@ ddat <- tbl_df(dat)
 
 # Data Processing
 
+We need to get our data into a format that avoids redudancy and overcounting. I decided to group the types of weather related disasers according to the following rules. 
+
+Tornados according to the Fujita scale (F-scale)
+  0,1,2,3,4,5
+Hurricaines that do not involve tornadoes or Hail
+Hail of any type that do not include tornadoes
+High Wind related 
+Cold without Snow and Ice related injuries and deaths
+Heat (without dust)
+Flood 
+Ice and Snow but discounting Cold related effects
+Volcano
+Dust without heat 
+
+
+The process for creating the filters was performed in an interative way so as to ensure that data wasn't counted twice to a given category. The first data types were relatively easy such as Tornadoes, but when diving down into a more selective chategory like HAIl, it was important to perform appropriate filters that would select out chategories that were already considered such as Tornadoes and Hurricaines that tend to produce Hail but whose chategory would be a superset of the damage chategory being analyzed.
+
+
+```{r,echo=TRUE}
+tornadoes <- ddat %>% 
+  filter ( !is.na(F) ) %>%
+  group_by(F) %>%
+  mutate(blah = ifelse(!is.na(F),"TORNADO","FOO")) %>%
+  summarise(EVTYPE,ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
+  knitr::kable(tornadoes)
+```
+
+```{r,echo=TRUE}
+tornadoes <- ddat %>% 
+  filter( !is.na(F)) %>% 
+  mutate( EVTYPE=ifelse(F,paste("TORNADO_",as.character(F),sep=""),"BAR")) %>% 
+  summarise(EVTYPE,ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
+  knitr::kable(tornadoes)
+```
+
+
+
 Something goes in here
 ```{r,echo=TRUE}
 perstorm_fatal_and_injuries <- ddat %>% 
-group_by( EVTYPE,F ) %>%
-summarise( ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
+  group_by( EVTYPE,F ) %>%
+  summarise( ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
 knitr::kable(perstorm_fatal_and_injuries)
 ```
 
 Clearly, from this table, we find that the tornadoes account for the 
-marjority of average fatalities and injuries.  
-
-
+marjority of average fatalities and injuries. 
 
 ##Will be investigating which types of events are most harmful to human health
 
