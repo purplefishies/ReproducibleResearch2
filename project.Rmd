@@ -32,8 +32,8 @@ This analyis will involve using the storm data provided by the national weather 
 
 
 ```{r,echo=TRUE,results='asis'}
-dat <- read.csv("stormdata.csv")
-ddat <- tbl_df(dat)
+dat <- read.csv("./stormdata.csv")
+ddat <- tbl_df( dat )
 ```
 
 
@@ -65,19 +65,20 @@ We calculate each type of event as follows
 length(ddat$F)
 ```
 
+### Tornadoes
 
 ```{r,echo=TRUE}
 tornadoes <- ddat %>%
-  filter( !is.na("F") ) %>%
-  group_by("F") %>%
-  mutate( EVTYPE=ifelse(!is.na("F"),paste("TORNADO_F",as.character(F),sep=""),"BLAH")) %>%
+  filter( !is.na(F) ) %>%
+  group_by(F) %>%
+  mutate( EVTYPE=ifelse(!is.na(F),paste("TORNADO_F",as.character(F),sep=""),"BLAH")) %>%
   group_by( EVTYPE ) %>%
   summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
              ave_injuries=mean(INJURIES,rm.na=TRUE),
              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
             )
- knitr::kable(tornadoes)
+
 ```
 
 
