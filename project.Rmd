@@ -56,14 +56,6 @@ The process for creating the filters was performed in an interative way so as to
 
 For instance, a typical encounter would be to first filter the events that matched "wind", and then reduce that set iterarively by inspecting the unique set of events that matched wind **and then exclude** events that had been already captured by a previous grouping.
 
-An example is the following. To perform the filtering for "wind", I would start with the following filter
-```{r,echo=TRUE}
-dat %>% filter( grepl(".*wind.*", EVTYPE,perl=T,ignore.case=T) ) %>%
-    select(EVTYPE) %>% unique()
-```
-Then I would inspect the results, and discover that several other FACTORS had been accounted for. These included "flood","cold","hurricane". Hence these FACTORS would need to be removed in order to establish what effect this one condition of "wind" had on the statistics I was interested in studying.
-
-
 
 ```{r,echo=TRUE}
 tornadoes <- ddat %>% 
@@ -71,6 +63,170 @@ tornadoes <- ddat %>%
   mutate( EVTYPE=ifelse(F,paste("TORNADO_",as.character(F),sep=""),"BAR")) %>% 
   summarise(EVTYPE,ave_fatal = mean(FATALITIES,na.rm=T), ave_injuries=mean(INJURIES, na.rm=T))
   knitr::kable(tornadoes)
+```
+
+We calculate each type of event as follows
+
+```{r,echo=TRUE}
+tornadoes <- ddat %>%
+    filter( !is.na(F) ) %>%
+    group_by(F) %>%
+    mutate( EVTYPE=ifelse(!is.na("F"),paste("TORNADO_F",as.character(F),sep=""),"BLAH"))  %>%
+    group_by( EVTYPE ) %>% 
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+               ave_injuries=mean(INJURIES,rm.na=TRUE),
+               ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+               ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Hurricanes
+
+```{r,echo=TRUE}
+hurricane <- ddat %>%
+    filter( grepl(".*hur[r]?i.*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="HURRICANE") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Hail
+```{r,echo=TRUE}
+hail <- ddat %>%
+    filter( grepl(".*hail.*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*tornado.*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="HAIL") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Thunderstorm and Wind
+
+```{r,echo=TRUE}
+tstorm_wind <- ddat %>%
+    filter( grepl(".*(wind|thunder|tstm).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*tornado.*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*hurricane.*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(cold|chill).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(flood).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="WIND_OR_TSTM") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Cold Withouth Snow or Ice
+
+```{r,echo=TRUE}
+cold_noice_snow <- ddat %>%
+    filter( grepl(".*(ice|cold|chill|snow).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(flood).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="COLD") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Heat 
+
+```{r,echo=TRUE}
+heat <- ddat %>%
+    filter( grepl(".*(heat).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="HEAT") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Flood
+
+```{r,echo=TRUE}
+flood <- ddat %>%
+    filter( grepl(".*(flood).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(thunder|tstm).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(wind).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(snow).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="FLOOD") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Ice and Snow without wind effects
+
+```{r,echo=TRUE}
+
+cold_ice_snow <- ddat %>%
+    filter( grepl(".*(ice|snow).*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(flood).*",  EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(chill|snow).*",EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(wind).*",EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="ICE_SNOW") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Volcano related 
+
+```{r,echo=TRUE}
+volcano <- ddat %>%
+    filter( grepl(".*volc.*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="VOLCANO") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+### Dust related
+
+```{r,echo=TRUE}
+dust <- ddat %>%
+    filter( grepl(".*dust.*", EVTYPE,perl=T,ignore.case=T) ) %>%
+    filter(!grepl(".*(wind).*",EVTYPE,perl=T,ignore.case=T) ) %>%
+    mutate( EVTYPE="DUST") %>%
+    group_by(EVTYPE) %>%
+    summarise( ave_fatal = mean(FATALITIES,rm.na=TRUE),
+              ave_injuries=mean(INJURIES,rm.na=TRUE),
+              ave_propdmg = mean(PROPDMG,rm.na=TRUE),
+              ave_cropdmg = mean(CROPDMG,rm.na=TRUE)
+              )
+```
+
+After each factor is isolated, I combine these into a new data table for analysis
+
+```{r,echo=TRUE}
+all_data <- Reduce( function(x,y){ merge(x,y,all=T) }, 
+  list(tornadoes, hurricane, hail, tstorm_wind, 
+       cold_noice_snow, heat, flood, cold_ice_snow, volcano, dust ) 
+  )
+all_data
 ```
 
 
