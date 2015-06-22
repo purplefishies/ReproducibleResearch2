@@ -17,6 +17,7 @@ merge_all <- function(x) {
     tmpmrg
 }
 
+
 thing_to_return <- list(~mean(FATALITIES,rm.na=TRUE),~mean(PROPDMG,rm.na=TRUE))
 othing <- function() {
     setNames(list(~mean(FATALITIES,rm.na=TRUE),
