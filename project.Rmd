@@ -17,7 +17,7 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='./figure/',
                      warning=FALSE, message=FALSE)
 ```
 
-# Syopsis 
+# Synopsis 
 
 With global scientific consensus corroborating the direct
 causal relationship between mankind's consumption of fossil fuels and
@@ -33,10 +33,10 @@ In this analysis, we will be investigating ways to assess which weather
 related events, as provided by the U.S. National Oceanic and
 Atmospheric Administration's (NOAA) storm database between the years
 of 1950 and 2011, provide the most harm to both Human life and to the
-economy as a whole. The assumptions for this analyis will be built up on
+economy as a whole. The assumptions for this analysis will be built up on
 the analysis that Earth's significant meteorological and geological
 events of the last 60 years can represent the long term average for
-the forseeable future.
+the foreseeable future.
 
 
 # Setting up the data.
@@ -54,7 +54,7 @@ analysis while working on the much smaller set of data.  The
 metaphorical "switch" can be flipped by just removing the file
 "stormdata.csv" and then re-linking it to the large CSV file.
 
-## Libraries used for analysis
+## Libraries used for this analysis
 ```{r,echo=FALSE,results='asis'}
 library(dplyr)
 library(ggplot2)
@@ -71,24 +71,36 @@ ddat <- tbl_df( dat )
 
 # Data Processing
 
-We need to get our data into a format that avoids redudancy and overcounting. I decided to group the types of weather related disasers according to the following rules. 
+We need to get our data into a format that avoids redundancy and
+over counting. I decided to group the types of weather related disasters
+according to the following rules.
 
-Tornados according to the Fujita scale (F-scale)
-  0,1,2,3,4,5
-Hurricaines that do not involve tornadoes or Hail
-Hail of any type that do not include tornadoes
-Thunderstorm / High Wind related but no Tornadoes, Hurricanes or Hail related
-Cold without Snow and Ice related injuries and deaths
-Heat (without dust)
-Flood 
-Ice and Snow but discounting Cold related effects
-Volcano
-Dust without heat 
+* Tornadoes according to the Fujita scale (F-scale) 0,1,2,3,4,5
+* Hurricanes that do not involve tornadoes or Hail
+* Hail of any type that do not include tornadoes
+* Thunderstorm / High Wind related but no Tornadoes, Hurricanes or Hail related
+* Cold without Snow and Ice related injuries and deaths
+* Heat (without dust)
+* Flood 
+* Ice and Snow but discounting Cold related effects
+* Volcano
+* Dust without heat 
 
 
-The process for creating the filters was performed in an interative way so as to ensure that data wasn't counted twice to a given category. The first data types were relatively easy such as Tornadoes, but when diving down into a more selective chategory like HAIl, it was important to perform appropriate filters that would select out chategories that were already considered such as Tornadoes and Hurricaines that tend to produce Hail but whose chategory would be a superset of the damage chategory being analyzed.
+The process for creating the filters was performed in an interative
+way so as to ensure that data wasn't counted twice to a given
+category. The first data types were relatively easy such as Tornadoes,
+but when diving down into a more selective chategory like HAIl, it was
+important to perform appropriate filters that would select out
+chategories that were already considered such as Tornadoes and
+Hurricaines that tend to produce Hail but whose chategory would be a
+superset of the damage chategory being analyzed.
 
-For instance, a typical encounter would be to first filter the events that matched "wind", and then reduce that set iterarively by inspecting the unique set of events that matched wind **and then exclude** events that had been already captured by a previous grouping.
+For instance, a typical encounter would be to first filter the events
+that matched "wind", and then reduce that set iterarively by
+inspecting the unique set of events that matched wind **and then
+exclude** events that had been already captured by a previous
+grouping.
 
 
 
