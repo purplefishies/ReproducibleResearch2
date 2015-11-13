@@ -43,7 +43,7 @@ the forseeable future.
 
 In order to assist with the analysis of a large data set, I have
 created two datasets : one represents the full NOAA set of
-data, and the other representing a smaller subset of the full set of
+data, and the other contains a smaller subset of the full set of
 data. In order select one data set or the other a "symbolic link" is
 setup from the file "stormdata.csv" to point to the dataset in
 question. 
