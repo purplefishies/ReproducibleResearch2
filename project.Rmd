@@ -89,20 +89,16 @@ according to the following rules.
 
 The process for creating the filters was performed in an iterative
 way so as to ensure that data wasn't counted twice to a given
-category. The first data types were relatively easy such as Tornadoes,
-but when diving down into a more selective category like HAIl, it was
+category. The first few data types were easier such as tornadoes and hurricanes
+as the selection of these events amounted to filtering for these
+categories. As I continued with this analysis of these events, it
+became difficult to filter out events that were already counted. For
+instance, when drilling down into a more selective category like hail, it was
 important to perform appropriate filters that would select out
-categories that were already considered such as Tornadoes and
-Hurricanes that tend to produce Hail but whose category would be a
-super set of the damage chategory being analyzed.
-
-For instance, a typical encounter would be to first filter the events
-that matched "wind", and then reduce that set iteratively by
-inspecting the unique set of events that matched wind **and then
-exclude** events that had been already captured by a previous
-grouping.
-
-
+categories that were already counted: namely the categories tornadoes and
+hurricanes would be over counted unless appropriate filters were used
+to remove the intersection of hail and tornadoes events as well as the intersection
+of hail and hurricane events.
 
 We calculate each type of event as follows
 ```{r,echo=TRUE}
