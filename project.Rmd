@@ -42,10 +42,10 @@ the foreseeable future.
 # Setting up the data.
 
 In order to assist with the analysis of a large data set, I have
-created two datasets : one represents the full NOAA set of
+created two data sets : one represents the full NOAA set of
 data, and the other contains a smaller subset of the full set of
 data. In order select one data set or the other a "symbolic link" is
-setup from the file "stormdata.csv" to point to the dataset in
+setup from the file "stormdata.csv" to point to the data set in
 question. 
 
 This approach makes it much easier to regenerate this document for the
@@ -87,17 +87,17 @@ according to the following rules.
 * Dust without heat 
 
 
-The process for creating the filters was performed in an interative
+The process for creating the filters was performed in an iterative
 way so as to ensure that data wasn't counted twice to a given
 category. The first data types were relatively easy such as Tornadoes,
-but when diving down into a more selective chategory like HAIl, it was
+but when diving down into a more selective category like HAIl, it was
 important to perform appropriate filters that would select out
-chategories that were already considered such as Tornadoes and
-Hurricaines that tend to produce Hail but whose chategory would be a
-superset of the damage chategory being analyzed.
+categories that were already considered such as Tornadoes and
+Hurricanes that tend to produce Hail but whose category would be a
+super set of the damage chategory being analyzed.
 
 For instance, a typical encounter would be to first filter the events
-that matched "wind", and then reduce that set iterarively by
+that matched "wind", and then reduce that set iteratively by
 inspecting the unique set of events that matched wind **and then
 exclude** events that had been already captured by a previous
 grouping.
@@ -288,7 +288,7 @@ damage. As these two
 
 ## Will be investigating which types of events are most harmful to human health
 
-Which parameters of the dataset indicate deaths / injuries
+Which parameters of the data set indicate deaths / injuries
 
 
 
