@@ -17,19 +17,51 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='./figure/',
                      warning=FALSE, message=FALSE)
 ```
 
+# Syopsis 
 
-```{r,echo=TRUE,results='asis'}
+With global scientific consensus corroborating the direct
+causal relationship between mankind's consumption of fossil fuels and
+global climate change, it is increasingly important that government
+agencies be aware of the variety and scale of these events so that
+contingency and budgetary plans can be constructed to most effectively
+handle these events when they occur.  In addition to planning for
+future events, it is important that historical data be preserved for
+use in categorizing and comparing new storm events to events measured
+during times of lower $CO_2$ concentrations.
+
+In this analysis, we will be investigating ways to assess which weather
+related events, as provided by the U.S. National Oceanic and
+Atmospheric Administration's (NOAA) storm database between the years
+of 1950 and 2011, provide the most harm to both Human life and to the
+economy as a whole. The assumptions for this analyis will be built up on
+the analysis that Earth's significant meteorological and geological
+events of the last 60 years can represent the long term average for
+the forseeable future.
+
+
+# Setting up the data.
+
+In order to assist with the analysis of a large data set, I have
+created two datasets : one represents the full \natweather set of
+data, and the other representing a smaller subset of the full set of
+data. In order select one data set or the other a "symbolic link" is
+setup from the file "stormdata.csv" to point to the dataset in
+question. 
+
+This approach makes it much easier to regenerate this document for the
+full set of data after spending time working and debugging the
+analysis while working on the much smaller set of data.  The
+metaphorical "switch" can be flipped by just removing the file
+"stormdata.csv" and then re-linking it to the large CSV file.
+
+## Libraries used for analysis
+```{r,echo=FALSE,results='asis'}
 library(dplyr)
 library(ggplot2)
 library(lubridate)
 ```
 
-
-# Syopsis
-With global scientific consensus corroborating the direct causal relationship between mankind's consumption of fossil fuels and global climate change, it is ever more important that Government resources be allocated to handle the new weather related disasters that are spawned by this changes of the Earth's climate.  In this dossier , we will be investigating ways to assess which weather related 
-
-This analyis will involve using the storm data provided by the national weather service between the years of 1950 and 2011. The assumptions for this analyis based on the years of coverage 
-
+## Reading in the datasets
 
 ```{r,echo=TRUE,results='asis'}
 dat <- read.csv("./stormdata.csv")
@@ -116,6 +148,8 @@ dust_filter <- ~grepl(".*dust.*", EVTYPE,perl=T,ignore.case=T) &
     !grepl(".*(wind).*",EVTYPE,perl=T,ignore.case=T)
 ```
 
+---
+## Example subtables
 ### Tornadoes
 
 ```{r,echo=TRUE}
@@ -125,6 +159,10 @@ tornadoes <- ddat %>%
     mutate( EVTYPE=ifelse(!is.na(F),paste("TORNADO_F",as.character(F),sep=""),"BLAH"))  %>%
     group_by( EVTYPE ) %>% 
     summarise_( .dots=capture_stats() )
+```
+
+### Example of Tornadoe Human and Property Damage
+```{r,echo=FALSE}
 knitr::kable(tornadoes)
 ```
 
@@ -159,7 +197,7 @@ wind_tstorm <- ddat %>%
     summarise_( .dots=capture_stats() )
 ```
 
-### Cold Withouth Snow or Ice
+### Cold Without Snow or Ice
 
 ```{r,echo=TRUE}
 cold_noicesnow <- ddat %>%
@@ -225,26 +263,24 @@ After each factor is isolated, I combine these into a new data table for analysi
 
 ```{r,echo=TRUE}
 all_data <- Reduce( function(x,y){ merge(x,y,all=T) }, list(tornadoes, hurricane, hail, wind_tstorm, cold_noicesnow, heat, flood, icesnow, volcano, dust ) )
-  
-knitr::kable(all_data)
+```
+```{r,echo=FALSE}
+knitr::kable( all_data %>% arrange( desc(ave_fatalities), desc(ave_injuries)))
 ```
 
+## Analysis of Natural Disasters
 
+For this section we will be investigating how the various disasters
+stack up in terms of both injuring Humans as well as causing economic
+damage. As these two 
 
+## Will be investigating which types of events are most harmful to human health
 
-
-Clearly, from this table, we find that the tornadoes of the variety F4 and F5 constitute the disasters with the 
-##Will be investigating which types of events are most harmful to human health
-
-which parameters of the dataset indicate deaths / injuries
-
+Which parameters of the dataset indicate deaths / injuries
 
 
 
 Which events have the largest economic consequences
-
-
-
 
 
 # Results
