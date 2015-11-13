@@ -76,14 +76,14 @@ over counting. I decided to group the types of weather related disasters
 according to the following rules.
 
 * Tornadoes according to the Fujita scale (F-scale) 0,1,2,3,4,5
-* Hurricanes that do not involve tornadoes or Hail
+* Hurricanes that do not involve tornadoes or hail
 * Hail of any type that do not include tornadoes
-* Thunderstorm / High Wind related but no Tornadoes, Hurricanes or Hail related
-* Cold without Snow and Ice related injuries and deaths
+* Thunderstorm / High Wind related but no tornadoes, hurricanes or hail related
+* Cold without snow and ice related injuries and deaths
 * Heat (without dust)
 * Flood 
-* Ice and Snow but discounting Cold related effects
-* Volcano
+* Ice and Snow but discounting cold related effects
+* Volcanoes
 * Dust without heat 
 
 
