@@ -90,10 +90,10 @@ from the original stormdata.csv data set.
 
 ```{r,echo=TRUE}
 capture_stats <- function() {
-    setNames(list(~mean(FATALITIES,rm.na=TRUE),
-                  ~mean(INJURIES,rm.na=TRUE),
-                  ~mean(PROPDMG,rm.na=TRUE),
-                  ~mean(CROPDMG,rm.na=TRUE),
+    setNames(list(~sum(FATALITIES,rm.na=TRUE),
+                  ~sum(INJURIES,rm.na=TRUE),
+                  ~sum(PROPDMG,rm.na=TRUE),
+                  ~sum(CROPDMG,rm.na=TRUE),
                   ~n()
                   ),
              c("ave_fatalities","ave_injuries","ave_propdmg","ave_cropdmg","nevents")
@@ -303,9 +303,9 @@ knitr::kable( all_data %>% arrange( desc(ave_fatalities), desc(ave_injuries)))
 
 ## Results
 
-To fully analyze this data set I decided to only take the
-top weather related disasters that were considered leaders of the statistics fatalities,
-injuries, property and crop damage.  
+To fully analyze this data set I decided to only take the top weather
+related disasters that were considered leaders of the statistics
+fatalities, injuries, property and crop damage.
 
 
 ```{r,echo=FALSE}
@@ -314,29 +314,17 @@ knitr::kable( all_data %>% mutate ( expfatal=ave_fatalities * nevents / 60 ) %>%
 
 <!-- asdpp  -->
 ```{r,echo=TRUE}
-topinjure  <- all_data %>% transmute( EVTYPE,exp_injure=(nevents/60)*ave_injuries) %>% arrange(desc(exp_injure))  %>% top_n(1) %>% transmute(EVTYPE)
-topdmg     <- all_data %>% transmute( EVTYPE,exp_dmg=(nevents/60)*ave_propdmg) %>% arrange(desc(exp_dmg))         %>% top_n(1) %>% transmute(EVTYPE)
-topcrop    <- all_data %>% transmute( EVTYPE,exp_cropdmg=(nevents/60)*ave_cropdmg) %>% arrange(desc(exp_cropdmg)) %>% top_n(1) %>% transmute(EVTYPE)
-topfatal   <- all_data %>% transmute( EVTYPE,exp_fatal=(nevents/60)*ave_fatalities) %>% arrange(desc(exp_fatal))  %>% top_n(1) %>% transmute(EVTYPE)
+topinjure  <- all_data %>% top_n(1, wt=ave_injuries )
+topdmg     <- all_data %>% top_n(1, wt=ave_propdmg )
+topcrop    <- all_data %>% top_n(1, wt=ave_cropdmg )
+topfatal   <- all_data %>% top_n(1, wt=ave_fatalities)
 all_top <- tbl_df(all_data[all_data$EVTYPE %in% c(topinjure,topdmg,topcrop,topfatal),])
 knitr::kable( all_top )
 ```
 
-and a final transformation
+And other stuff...
 
-```{r,echo=TRUE}
-xform_expected <- function() {
-    setNames(list(~EVTYPE,
-                  ~((nevents/60)*ave_fatalities),
-                  ~((nevents/60)*ave_injuries),
-                  ~((nevents/60)*ave_propdmg),
-                  ~((nevents/60)*ave_cropdmg),
-                  ~nevents
-                  ),
-             c("EVTYPE","exp_fatalities","exp_injuries","exp_propdmg","exp_cropdmg","nevents")
-             )
-}
-ntable <- all_top %>% transmute_(.dots = xform_expected() )
-knitr::kable( ntable  )
-```
+
+
+
 
