@@ -1,5 +1,6 @@
 
-
+default: project.pdf
+	echo "Done"
 
 %.md:	%.Rmd
 	r -e 'library(knitr); knit("project.Rmd",encoding="UTF-8")'
