@@ -1,23 +1,23 @@
 ---
-title: "Investigating the patterns of damage from various natural disasters"
+title: "Investigating the patterns of damage from atmospheric natural disasters"
 author: "Jimi Damon"
 date: "06/21/2015"
-output: html_document
-framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
-highlighter : highlight.js  # {highlight.js, prettify, highlight}
-hitheme     : tomorrow      # 
+output: pdf_document
+hitheme: tomorrow
+mode: selfcontained
+highlighter: highlight.js
+framework: io2012
 url:
-  lib: ../../librariesNew
   assets: ../../assets
-widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
-mode        : selfcontained # {standalone, draft}
+  lib: ../../librariesNew
+widgets: mathjax
 ---
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='./figure/',
                      warning=FALSE, message=FALSE)
 ```
 
-# Synopsis 
+## Synopsis 
 
 With global scientific consensus corroborating the direct
 causal relationship between mankind's consumption of fossil fuels and
@@ -29,17 +29,16 @@ future events, it is important that historical data be preserved for
 use in categorizing and comparing new storm events to events measured
 during times of lower $CO_2$ concentrations.
 
-In this analysis, we will be investigating ways to assess which weather
+In this analysis, I investigated ways to assess which weather
 related events, as provided by the U.S. National Oceanic and
 Atmospheric Administration's (NOAA) storm database between the years
-of 1950 and 2011, provide the most harm to both Human life and to the
-economy as a whole. The assumptions for this analysis will be built up on
+of 1950 and 2011, provide the most harm to both Human life and to two
+key economic metrics. The assumptions for this analysis will be built up on
 the analysis that Earth's significant meteorological and geological
 events of the last 60 years can represent the long term average for
-the foreseeable future.
+the foreseeable future.  
 
-
-# Setting up the data.
+## Set up
 
 In order to assist with the analysis of a large data set, I have
 created two data sets : one represents the full NOAA set of
@@ -54,24 +53,29 @@ analysis while working on the much smaller set of data.  The
 metaphorical "switch" can be flipped by just removing the file
 "stormdata.csv" and then re-linking it to the large CSV file.
 
-## Libraries used for this analysis
-```{r,echo=FALSE,results='asis'}
+### Libraries used for this analysis
+```{r,echo=TRUE,results='asis'}
 library(dplyr)
 library(ggplot2)
 library(lubridate)
 ```
 
-## Reading in the datasets
 
-```{r,echo=TRUE,results='asis'}
+---
+
+## Data Processing
+
+### Reading in the datasets
+
+As mentioned in the Set up Section, the NOAA database was saved to the
+file stormdata.csv. I began my analysis by reading this file in.
+
+```{r,echo=TRUE,cache=TRUE,results='asis'}
 dat <- read.csv("./stormdata.csv")
 ddat <- tbl_df( dat )
 ```
 
-
-# Data Processing
-
-We need to get our data into a format that avoids redundancy and
+I then needed to get my data into a format that avoided redundancy and
 over counting. I decided to group the types of weather related disasters
 according to the following rules.
 
@@ -86,7 +90,6 @@ according to the following rules.
 * Volcanoes
 * Dust without heat 
 
-
 The process for creating the filters was performed in an iterative
 way so as to ensure that data wasn't counted twice to a given
 category. The first few data types were easier such as tornadoes and hurricanes
@@ -100,8 +103,8 @@ hurricanes would be over counted unless appropriate filters were used
 to remove the intersection of hail and tornadoes events as well as the intersection
 of hail and hurricane events.
 
-We calculate each type of event as follows
-```{r,echo=TRUE}
+<!-- I calculated each type of event as follows -->
+```{r,echo=FALSE}
 length(ddat$F)
 ```
 
@@ -118,12 +121,11 @@ capture_stats <- function() {
 }
 ```
 
-
 Define the different types of filters for extracting the pertinent information
 
-## Filters
+### Filters
 
-```{r,echo=FALSE}
+```{r,echo=TRUE}
 tornado_filter <- ~!is.na(F)
 hurricane_filter <- ~grepl(".*hur[r]?i.*", EVTYPE,perl=T,ignore.case=T )
 hail_filter <- ~grepl(".*hail.*", EVTYPE,perl=T,ignore.case=T) & !grepl(".*tornado.*",  EVTYPE,perl=T,ignore.case=T)
@@ -157,8 +159,8 @@ dust_filter <- ~grepl(".*dust.*", EVTYPE,perl=T,ignore.case=T) &
 ```
 
 ---
-## Example subtables
-### Tornadoes
+### Example Sub-tables created by filters
+#### Tornadoes
 
 ```{r,echo=TRUE}
 tornadoes <- ddat %>%
@@ -169,7 +171,7 @@ tornadoes <- ddat %>%
     summarise_( .dots=capture_stats() )
 ```
 
-### Example of Tornadoe Human and Property Damage
+#### Example of Tornadoe Human and Property Damage
 ```{r,echo=FALSE}
 knitr::kable(tornadoes)
 ```
@@ -267,7 +269,12 @@ dust <- ddat %>%
     summarise_( .dots=capture_stats() )
 ```
 
-After each factor is isolated, I combine these into a new data table for analysis
+### Combined table
+
+After each factor is isolated, I combine each of these sub-tables into
+a master table to consolidate results and make it easier to work on
+the aggregate levels.
+
 
 ```{r,echo=TRUE}
 all_data <- Reduce( function(x,y){ merge(x,y,all=T) }, list(tornadoes, hurricane, hail, wind_tstorm, cold_noicesnow, heat, flood, icesnow, volcano, dust ) )
@@ -276,27 +283,13 @@ all_data <- Reduce( function(x,y){ merge(x,y,all=T) }, list(tornadoes, hurricane
 knitr::kable( all_data %>% arrange( desc(ave_fatalities), desc(ave_injuries)))
 ```
 
-## Analysis of Natural Disasters
+## Results
 
-For this section we will be investigating how the various disasters
-stack up in terms of both injuring Humans as well as causing economic
-damage. As these two 
-
-## Will be investigating which types of events are most harmful to human health
-
-Which parameters of the data set indicate deaths / injuries
+To fully analyze this data set I decided to only take the
+top 2 weather related disasters that were considered leaders of fatalities,
+injuries, property and crop damage.  In addition, I created another 
 
 ```{r,echo=FALSE}
 knitr::kable( all_data %>% mutate ( expfatal=ave_fatalities * nevents / 60 ) %>% arrange( desc(expfatal)))
 ```                  
 
-Which events have the largest economic consequences
-
-
-# Results
-
-Something goes in here too
-
-# Conclusion 
-
-Something here too
