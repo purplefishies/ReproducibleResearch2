@@ -29,14 +29,18 @@ future events, it is important that historical data be preserved for
 use in categorizing and comparing new storm events to events measured
 during times of lower $CO_2$ concentrations.
 
-In this analysis, I investigated ways to assess which weather
-related events, as provided by the U.S. National Oceanic and
-Atmospheric Administration's (NOAA) storm database between the years
-of 1950 and 2011, provide the most harm to both Human life and to two
-key economic metrics. The assumptions for this analysis will be built up on
-the analysis that Earth's significant meteorological and geological
-events of the last 60 years can represent the long term average for
-the foreseeable future.  
+In this analysis, I investigated ways to assess which weather related
+events, as provided by the U.S. National Oceanic and Atmospheric
+Administration's (NOAA) storm database between the years of 1950 and
+2011, provide the most harm to both Human life and to the economy
+based on two key economic metrics. I performed some complex filtering
+which allowed me to identify the top two types of disasters that
+affect human life accross the the statistics of average fatalities and
+injuries as well as economic health in terms of average property and crop
+damage. The assumptions for this analysis were built up on the
+analysis that Earth's significant meteorological and geological events
+of the last 60 years were can represent the long term average for the
+foreseeable future.
 
 ## Set up
 
@@ -53,17 +57,16 @@ analysis while working on the much smaller set of data.  The
 metaphorical "switch" can be flipped by just removing the file
 "stormdata.csv" and then re-linking it to the large CSV file.
 
-### Libraries used for this analysis
+---
+
+## Data Processing
+
+### R Libraries used for this analysis
 ```{r,echo=TRUE,results='asis'}
 library(dplyr)
 library(ggplot2)
 library(lubridate)
 ```
-
-
----
-
-## Data Processing
 
 ### Reading in the datasets
 
@@ -75,7 +78,32 @@ dat <- read.csv("./stormdata.csv")
 ddat <- tbl_df( dat )
 ```
 
-I then needed to get my data into a format that avoided redundancy and
+
+### Defining capture statistics
+
+In order to keep a modular design to this project, I realized at first
+that I wasn't sure of the statistics I wanted to keep as I built up my dataset.
+Hence I used a generic function "capture_stats", that would be used to 
+extract the relevant statistics from each captured sub grouping of the 
+over all weather data. This function could easily extended to extract new statistics 
+from the original stormdata.csv data set.
+
+```{r,echo=TRUE}
+capture_stats <- function() {
+    setNames(list(~mean(FATALITIES,rm.na=TRUE),
+                  ~mean(PROPDMG,rm.na=TRUE),
+                  ~mean(PROPDMG,rm.na=TRUE),
+                  ~mean(CROPDMG,rm.na=TRUE),
+                  ~n()
+                  ),
+             c("ave_fatalities","ave_injuries","ave_propdmg","ave_cropdmg","nevents")
+             )  
+}
+```
+
+### Filtering of the dataset 
+
+I needed to get my data into a format that avoided redundancy and
 over counting. I decided to group the types of weather related disasters
 according to the following rules.
 
@@ -103,27 +131,13 @@ hurricanes would be over counted unless appropriate filters were used
 to remove the intersection of hail and tornadoes events as well as the intersection
 of hail and hurricane events.
 
-<!-- I calculated each type of event as follows -->
-```{r,echo=FALSE}
-length(ddat$F)
-```
+#### Design of the filters.
 
-```{r,echo=TRUE}
-capture_stats <- function() {
-    setNames(list(~mean(FATALITIES,rm.na=TRUE),
-                  ~mean(PROPDMG,rm.na=TRUE),
-                  ~mean(PROPDMG,rm.na=TRUE),
-                  ~mean(CROPDMG,rm.na=TRUE),
-                  ~n()
-                  ),
-             c("ave_fatalities","ave_injuries","ave_propdmg","ave_cropdmg","nevents")
-             )  
-}
-```
-
-Define the different types of filters for extracting the pertinent information
-
-### Filters
+Filters were design in a bottom up format whereby new filters were
+designed by creating a filter and iteratively verifying that it's
+selection of events did not intersect with any previously created
+filter. This trial and error process , while complex, did ensure that
+events were not doubly counted.
 
 ```{r,echo=TRUE}
 tornado_filter <- ~!is.na(F)
@@ -143,7 +157,6 @@ icesnow_filter <- ~grepl(".*(ice|snow).*", EVTYPE,perl=T,ignore.case=T) &
   !grepl(".*(flood).*",  EVTYPE,perl=T,ignore.case=T) &
 	!grepl(".*(chill|snow).*",EVTYPE,perl=T,ignore.case=T) &
 	!grepl(".*(wind).*",EVTYPE,perl=T,ignore.case=T)
-
 
 head_filter <- ~grepl(".*(heat).*", EVTYPE,perl=T,ignore.case=T)
 
