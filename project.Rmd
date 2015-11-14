@@ -287,7 +287,7 @@ damage. As these two
 Which parameters of the data set indicate deaths / injuries
 
 ```{r,echo=FALSE}
-knitr::kable( all_data %>% mutate ( exppropdmg=ave_propdmg * nevents / 50 ) %>% arrange( desc(exppropdmg)))
+knitr::kable( all_data %>% mutate ( expfatal=ave_fatalities * nevents / 60 ) %>% arrange( desc(expfatal)))
 ```                  
 
 Which events have the largest economic consequences
