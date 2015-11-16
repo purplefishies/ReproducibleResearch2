@@ -96,7 +96,7 @@ capture_stats <- function() {
                   ~sum(CROPDMG,rm.na=TRUE),
                   ~n()
                   ),
-             c("ave_fatalities","ave_injuries","ave_propdmg","ave_cropdmg","nevents")
+             c("tot_fatalities","tot_injuries","tot_propdmg","tot_cropdmg","nevents")
              )  
 }
 ```
@@ -298,7 +298,7 @@ all_data <- Reduce( function(x,y){ merge(x,y,all=T) },
                  volcano, dust ) )
 ```
 ```{r,echo=FALSE}
-knitr::kable( all_data %>% arrange( desc(ave_fatalities), desc(ave_injuries)))
+knitr::kable( all_data %>% arrange( desc(tot_fatalities), desc(tot_injuries)))
 ```
 
 ## Results
@@ -309,21 +309,27 @@ fatalities, injuries, property and crop damage.
 
 
 ```{r,echo=FALSE}
-knitr::kable( all_data %>% mutate ( expfatal=ave_fatalities * nevents / 60 ) %>% arrange( desc(expfatal)))
+knitr::kable( all_data %>% mutate ( expfatal=tot_fatalities * nevents / 60 ) %>% arrange( desc(expfatal)))
 ```                  
 
 <!-- asdpp  -->
 ```{r,echo=TRUE}
-topinjure  <- all_data %>% top_n(1, wt=ave_injuries )
-topdmg     <- all_data %>% top_n(1, wt=ave_propdmg )
-topcrop    <- all_data %>% top_n(1, wt=ave_cropdmg )
-topfatal   <- all_data %>% top_n(1, wt=ave_fatalities)
+topinjure  <- all_data %>% top_n(1, wt=tot_injuries )
+topdmg     <- all_data %>% top_n(1, wt=tot_propdmg )
+topcrop    <- all_data %>% top_n(1, wt=tot_cropdmg )
+topfatal   <- all_data %>% top_n(1, wt=tot_fatalities)
 all_top <- tbl_df(all_data[all_data$EVTYPE %in% c(topinjure,topdmg,topcrop,topfatal),])
 knitr::kable( all_top )
 ```
 
-And other stuff...
-
+A final plot of the data
+```{r,echo=TRUE}
+p1 <- ggplot( all_top, aes(x=EVTYPE,y=tot_fatalities,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
+p2 <- ggplot( all_top, aes(x=EVTYPE,y=tot_injuries,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
+p3 <- ggplot( all_top, aes(x=EVTYPE,y=tot_injuries,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
+p4 <- ggplot( all_top, aes(x=EVTYPE,y=tot_injuries,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
+multiplot(p1,p2,p3,p4,cols=2)
+```
 
 
 
