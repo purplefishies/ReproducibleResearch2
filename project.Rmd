@@ -66,6 +66,7 @@ metaphorical "switch" can be flipped by just removing the file
 library(dplyr)
 library(ggplot2)
 library(lubridate)
+library(gridExtra)
 ```
 
 ### Reading in the datasets
@@ -326,9 +327,9 @@ A final plot of the data
 ```{r,echo=TRUE}
 p1 <- ggplot( all_top, aes(x=EVTYPE,y=tot_fatalities,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
 p2 <- ggplot( all_top, aes(x=EVTYPE,y=tot_injuries,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
-p3 <- ggplot( all_top, aes(x=EVTYPE,y=tot_injuries,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
-p4 <- ggplot( all_top, aes(x=EVTYPE,y=tot_injuries,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
-multiplot(p1,p2,p3,p4,cols=2)
+p3 <- ggplot( all_top, aes(x=EVTYPE,y=tot_propdmg,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
+p4 <- ggplot( all_top, aes(x=EVTYPE,y=tot_cropdmg,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
+grid.arrange(p1,p2,p3,p4,ncol=2)
 ```
 
 
