@@ -382,10 +382,18 @@ knitr::kable( all_top )
 A final plot of the data
 
 ```r
-p1 <- ggplot( all_top, aes(x=EVTYPE,y=tot_fatalities,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
-p2 <- ggplot( all_top, aes(x=EVTYPE,y=tot_injuries,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
-p3 <- ggplot( all_top, aes(x=EVTYPE,y=tot_propdmg,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
-p4 <- ggplot( all_top, aes(x=EVTYPE,y=tot_cropdmg,fill=EVTYPE)) + geom_bar(stat="identity",position='dodge')
+p1 <- ggplot( all_top, aes(x=EVTYPE,y=tot_fatalities,fill=EVTYPE)) +
+              labs(x="Storm type", y="Fatalities") +
+              geom_bar(stat="identity",position='dodge') 
+p2 <- ggplot( all_top,aes(x=EVTYPE,y=tot_injuries,fill=EVTYPE)) + 
+              labs(x="Storm type",y="Injuries") + 
+              geom_bar(stat="identity",position='dodge') 
+p3 <-ggplot( all_top, aes(x=EVTYPE,y=tot_propdmg,fill=EVTYPE)) +
+             labs(x="Storm type", y="Property Damage") +
+             geom_bar(stat="identity",position='dodge') 
+p4 <- ggplot( all_top,aes(x=EVTYPE,y=tot_cropdmg,fill=EVTYPE)) + 
+              labs(x="Storm type",y="Crop Damage") + 
+              geom_bar(stat="identity",position='dodge')
 grid.arrange(p1,p2,p3,p4,ncol=2)
 ```
 
